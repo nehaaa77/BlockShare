@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlockShare - Secure Document Sharing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background: #0d1117;
+      color: #c9d1d9;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    header {
+      background: #161b22;
+      padding: 1rem 2rem;
+      text-align: center;
+      border-bottom: 1px solid #30363d;
+    }
+    header h1 {
+      font-size: 2rem;
+      color: #58a6ff;
+    }
+    main {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .upload-box {
+      background: #21262d;
+      border: 2px dashed #58a6ff;
+      border-radius: 12px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 600px;
+      text-align: center;
+    }
+    .upload-box input[type="file"] {
+      display: none;
+    }
+    .custom-upload {
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: #58a6ff;
+      color: #0d1117;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    .file-info {
+      margin: 1rem 0;
+      color: #a5d6ff;
+    }
+    .link-box {
+      margin-top: 2rem;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 1rem;
+      color: #58a6ff;
+      word-break: break-all;
+    }
+    footer {
+      background: #161b22;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      border-top: 1px solid #30363d;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>BlockShare</h1>
+    <p>Blockchain-based Secure Document Sharing</p>
+  </header>
+  <main>
+    <div class="upload-box">
+      <h2>Upload a File</h2>
+      <label for="fileInput" class="custom-upload">Choose File (Max: 50MB)</label>
+      <input type="file" id="fileInput" accept="*/*" />
+      <div class="file-info" id="fileInfo">No file selected</div>
+      <button onclick="generateLink()" class="custom-upload">Generate Secure Link</button>
+      <div class="link-box" id="secureLinkBox" style="display:none;"></div>
+    </div>
+  </main>
+  <footer>
+    &copy; 2025 Netrinix Solution | BlockShare Open Source | <a href="https://github.com/netrinix/blockshare" style="color:#58a6ff">GitHub Repo</a>
+  </footer>
+  <script>
+    let uploadedFile = null;
+
+    document.getElementById("fileInput").addEventListener("change", (e) => {
+      uploadedFile = e.target.files[0];
+      if (uploadedFile) {
+        if (uploadedFile.size > 50 * 1024 * 1024) {
+          alert("File too large! Maximum 50MB allowed.");
+          e.target.value = "";
+          document.getElementById("fileInfo").innerText = "No file selected";
+          uploadedFile = null;
+        } else {
+          document.getElementById("fileInfo").innerText = uploadedFile.name;
+        }
+      }
+    });
+
+    function generateLink() {
+      if (!uploadedFile) {
+        alert("Please select a file first.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const fileData = e.target.result;
+        const fileName = uploadedFile.name;
+        const encoded = btoa(fileData);
+        const blob = new Blob([fileData], { type: uploadedFile.type });
+        const url = URL.createObjectURL(blob);
+        document.getElementById("secureLinkBox").innerHTML = `
+          <strong>Secure Link:</strong><br />
+          <a href="${url}" download="${fileName}" target="_blank">${url}</a>
+          <br /><small>This link will expire in 2 minutes.</small>
+        `;
+        document.getElementById("secureLinkBox").style.display = "block";
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          document.getElementById("secureLinkBox").innerHTML = `<em>Link expired.</em>`;
+        }, 2 * 60 * 1000); // 2 minutes
+      };
+      reader.readAsArrayBuffer(uploadedFile);
+    }
+  </script>
+</body>
+</html>
