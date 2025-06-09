@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BlockShare - Secure Document Sharing</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       margin: 0;
@@ -13,21 +14,50 @@
       font-family: 'Inter', sans-serif;
     }
     body {
-      background: #0d1117;
+      background: linear-gradient(135deg, #0a0e17, #161b22);
       color: #c9d1d9;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      line-height: 1.6;
     }
     header {
-      background: #161b22;
-      padding: 1rem 2rem;
+      background: rgba(22, 27, 34, 0.9);
+      padding: 1.5rem 2rem;
       text-align: center;
       border-bottom: 1px solid #30363d;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #58a6ff, #2ea043, #58a6ff);
+      background-size: 200% 200%;
+      animation: gradient 3s ease infinite;
+    }
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
     header h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
       color: #58a6ff;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px rgba(88, 166, 255, 0.3);
+    }
+    .tagline {
+      font-size: 1.1rem;
+      color: #8b949e;
+      max-width: 600px;
+      margin: 0 auto;
     }
     main {
       flex: 1;
@@ -36,110 +66,529 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+    .upload-container {
+      width: 100%;
+      max-width: 700px;
+      background: rgba(22, 27, 34, 0.8);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      border: 1px solid #30363d;
+      backdrop-filter: blur(10px);
+    }
+    .upload-header {
+      padding: 1.5rem;
+      background: rgba(33, 38, 45, 0.6);
+      border-bottom: 1px solid #30363d;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .upload-header i {
+      color: #58a6ff;
+      font-size: 1.8rem;
+    }
+    .upload-header h2 {
+      font-size: 1.8rem;
+      color: #f0f6fc;
     }
     .upload-box {
-      background: #21262d;
-      border: 2px dashed #58a6ff;
-      border-radius: 12px;
-      padding: 2rem;
-      width: 100%;
-      max-width: 600px;
+      padding: 2.5rem;
       text-align: center;
+      position: relative;
+    }
+    .upload-box::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #58a6ff, #2ea043);
+    }
+    .upload-icon {
+      font-size: 4rem;
+      color: #58a6ff;
+      margin-bottom: 1.5rem;
+      opacity: 0.8;
+    }
+    .upload-box p {
+      margin-bottom: 1.5rem;
+      color: #8b949e;
+      font-size: 1.1rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
     }
     .upload-box input[type="file"] {
       display: none;
     }
     .custom-upload {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       padding: 1rem 2rem;
-      background: #58a6ff;
-      color: #0d1117;
+      background: linear-gradient(135deg, #238636, #2ea043);
+      color: white;
       font-weight: bold;
       border-radius: 8px;
       cursor: pointer;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
+      border: none;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 10px rgba(35, 134, 54, 0.3);
+    }
+    .custom-upload:hover {
+      background: linear-gradient(135deg, #2ea043, #3fb950);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(35, 134, 54, 0.4);
+    }
+    .custom-upload:active {
+      transform: translateY(0);
+    }
+    .custom-upload.secondary {
+      background: linear-gradient(135deg, #1f6feb, #58a6ff);
+      box-shadow: 0 4px 10px rgba(31, 111, 235, 0.3);
+    }
+    .custom-upload.secondary:hover {
+      background: linear-gradient(135deg, #58a6ff, #79c0ff);
     }
     .file-info {
-      margin: 1rem 0;
-      color: #a5d6ff;
+      margin: 1.5rem 0;
+      padding: 1.2rem;
+      background: rgba(13, 17, 23, 0.6);
+      border-radius: 8px;
+      border: 1px solid #30363d;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    .file-info i {
+      color: #58a6ff;
+      font-size: 1.5rem;
+    }
+    .file-info-text {
+      text-align: left;
+    }
+    .file-info-text .file-name {
+      font-weight: bold;
+      color: #f0f6fc;
+      margin-bottom: 0.3rem;
+    }
+    .file-info-text .file-size {
+      color: #8b949e;
+      font-size: 0.9rem;
     }
     .link-box {
       margin-top: 2rem;
-      background: #0d1117;
+      background: rgba(13, 17, 23, 0.8);
       border: 1px solid #30363d;
       border-radius: 8px;
-      padding: 1rem;
+      padding: 1.5rem;
       color: #58a6ff;
       word-break: break-all;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      display: none;
+    }
+    .link-box::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(to bottom, #58a6ff, #2ea043);
+    }
+    .link-box h3 {
+      color: #f0f6fc;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .link-box h3 i {
+      color: #58a6ff;
+    }
+    .link-box a {
+      color: #58a6ff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+      word-break: break-all;
+      display: block;
+      padding: 0.8rem;
+      background: rgba(88, 166, 255, 0.1);
+      border-radius: 6px;
+      margin: 1rem 0;
+      border: 1px solid rgba(88, 166, 255, 0.3);
+    }
+    .link-box a:hover {
+      color: #79c0ff;
+      background: rgba(88, 166, 255, 0.15);
+    }
+    .link-box small {
+      display: block;
+      color: #8b949e;
+      margin-top: 0.8rem;
+      font-size: 0.95rem;
+    }
+    .security-info {
+      display: flex;
+      gap: 15px;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .security-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(88, 166, 255, 0.1);
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+    .security-item i {
+      color: #3fb950;
     }
     footer {
-      background: #161b22;
-      padding: 1rem;
+      background: rgba(22, 27, 34, 0.9);
+      padding: 1.5rem;
       text-align: center;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       border-top: 1px solid #30363d;
+      margin-top: 2rem;
+    }
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: #58a6ff;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .footer-links a:hover {
+      color: #79c0ff;
+      text-decoration: underline;
+    }
+    .copyright {
+      color: #8b949e;
+      margin-top: 1rem;
+    }
+    .blockchain-animation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.1;
+      overflow: hidden;
+    }
+    .block {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #58a6ff;
+      border-radius: 2px;
+      opacity: 0;
+      animation: float 15s infinite linear;
+    }
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.7;
+      }
+      90% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: translateY(-100px) rotate(720deg);
+        opacity: 0;
+      }
+    }
+    .status-bar {
+      height: 6px;
+      background: #30363d;
+      border-radius: 3px;
+      margin: 1.5rem 0;
+      overflow: hidden;
+      display: none;
+    }
+    .status-progress {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #58a6ff, #2ea043);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    @media (max-width: 768px) {
+      main {
+        padding: 1.5rem;
+      }
+      .upload-box {
+        padding: 1.5rem;
+      }
+      .upload-header {
+        padding: 1rem;
+      }
+      .upload-header h2 {
+        font-size: 1.5rem;
+      }
+      .upload-icon {
+        font-size: 3rem;
+      }
+      .custom-upload {
+        padding: 0.9rem 1.5rem;
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Blockchain animation in background -->
+  <div class="blockchain-animation" id="blockchainAnimation"></div>
+  
   <header>
-    <h1>BlockShare</h1>
-    <p>Blockchain-based Secure Document Sharing</p>
+    <h1><i class="fas fa-link"></i> BlockShare</h1>
+    <p class="tagline">Blockchain-based Secure Document Sharing with Cross-Network Access</p>
   </header>
+  
   <main>
-    <div class="upload-box">
-      <h2>Upload a File</h2>
-      <label for="fileInput" class="custom-upload">Choose File (Max: 50MB)</label>
-      <input type="file" id="fileInput" accept="*/*" />
-      <div class="file-info" id="fileInfo">No file selected</div>
-      <button onclick="generateLink()" class="custom-upload">Generate Secure Link</button>
-      <div class="link-box" id="secureLinkBox" style="display:none;"></div>
+    <div class="upload-container">
+      <div class="upload-header">
+        <i class="fas fa-lock"></i>
+        <h2>Secure File Sharing</h2>
+      </div>
+      
+      <div class="upload-box">
+        <div class="upload-icon">
+          <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        
+        <p>Upload your document and generate a secure, shareable link that works across any network or device.</p>
+        
+        <label for="fileInput" class="custom-upload">
+          <i class="fas fa-file-upload"></i> Choose File (Max: 50MB)
+        </label>
+        <input type="file" id="fileInput" accept="*/*">
+        
+        <div class="file-info" id="fileInfo" style="display: none;">
+          <i class="fas fa-file-alt"></i>
+          <div class="file-info-text">
+            <div class="file-name" id="fileName">document.pdf</div>
+            <div class="file-size" id="fileSize">2.5 MB</div>
+          </div>
+        </div>
+        
+        <div class="status-bar" id="statusBar">
+          <div class="status-progress" id="statusProgress"></div>
+        </div>
+        
+        <button onclick="uploadFile()" class="custom-upload secondary" id="uploadButton">
+          <i class="fas fa-shield-alt"></i> Generate Secure Link
+        </button>
+        
+        <div class="link-box" id="secureLinkBox">
+          <h3><i class="fas fa-link"></i> Secure Download Link</h3>
+          <div id="linkDisplay">https://blockshare.com/download/xyz123</div>
+          <a href="#" id="downloadLink" target="_blank">
+            <i class="fas fa-download"></i> Download File Now
+          </a>
+          <small>This link will expire in <span id="countdown">2:00</span> minutes. Only accessible once.</small>
+        </div>
+        
+        <div class="security-info">
+          <div class="security-item">
+            <i class="fas fa-check-circle"></i>
+            <span>End-to-End Encryption</span>
+          </div>
+          <div class="security-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Cross-Network Access</span>
+          </div>
+          <div class="security-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Auto-Expiring Links</span>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
+  
   <footer>
-    &copy; 2025 Netrinix Solution | BlockShare Open Source | <a href="https://github.com/netrinix/blockshare" style="color:#58a6ff">GitHub Repo</a>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="#"><i class="fas fa-shield-alt"></i> Security</a>
+        <a href="#"><i class="fas fa-file-contract"></i> Privacy Policy</a>
+        <a href="#"><i class="fas fa-code"></i> API</a>
+        <a href="#"><i class="fab fa-github"></i> GitHub Repo</a>
+        <a href="#"><i class="fas fa-question-circle"></i> Support</a>
+      </div>
+      <div class="copyright">
+        &copy; 2025 Netrinix Solution | BlockShare Open Source | v2.1.5
+      </div>
+    </div>
   </footer>
+  
   <script>
-    let uploadedFile = null;
-
-    document.getElementById("fileInput").addEventListener("change", (e) => {
-      uploadedFile = e.target.files[0];
-      if (uploadedFile) {
-        if (uploadedFile.size > 50 * 1024 * 1024) {
-          alert("File too large! Maximum 50MB allowed.");
-          e.target.value = "";
-          document.getElementById("fileInfo").innerText = "No file selected";
-          uploadedFile = null;
-        } else {
-          document.getElementById("fileInfo").innerText = uploadedFile.name;
-        }
+    // Create blockchain animation
+    function createBlockchainAnimation() {
+      const container = document.getElementById('blockchainAnimation');
+      for (let i = 0; i < 20; i++) {
+        const block = document.createElement('div');
+        block.classList.add('block');
+        block.style.left = `${Math.random() * 100}%`;
+        block.style.animationDelay = `${Math.random() * 15}s`;
+        block.style.width = `${Math.random() * 20 + 5}px`;
+        block.style.height = `${Math.random() * 20 + 5}px`;
+        container.appendChild(block);
       }
+    }
+    
+    let uploadedFile = null;
+    let expirationTimer = null;
+    let countdownInterval = null;
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      createBlockchainAnimation();
+      
+      document.getElementById("fileInput").addEventListener("change", (e) => {
+        uploadedFile = e.target.files[0];
+        if (uploadedFile) {
+          if (uploadedFile.size > 50 * 1024 * 1024) {
+            alert("File too large! Maximum 50MB allowed.");
+            e.target.value = "";
+            hideFileInfo();
+            uploadedFile = null;
+          } else {
+            showFileInfo(uploadedFile);
+          }
+        }
+      });
     });
-
-    function generateLink() {
+    
+    function showFileInfo(file) {
+      const fileInfo = document.getElementById('fileInfo');
+      document.getElementById('fileName').textContent = file.name;
+      document.getElementById('fileSize').textContent = formatFileSize(file.size);
+      fileInfo.style.display = 'flex';
+    }
+    
+    function hideFileInfo() {
+      document.getElementById('fileInfo').style.display = 'none';
+    }
+    
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2) + ' ' + sizes[i];
+    }
+    
+    function uploadFile() {
       if (!uploadedFile) {
         alert("Please select a file first.");
         return;
       }
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const fileData = e.target.result;
-        const fileName = uploadedFile.name;
-        const encoded = btoa(fileData);
-        const blob = new Blob([fileData], { type: uploadedFile.type });
-        const url = URL.createObjectURL(blob);
-        document.getElementById("secureLinkBox").innerHTML = `
-          <strong>Secure Link:</strong><br />
-          <a href="${url}" download="${fileName}" target="_blank">${url}</a>
-          <br /><small>This link will expire in 2 minutes.</small>
-        `;
-        document.getElementById("secureLinkBox").style.display = "block";
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-          document.getElementById("secureLinkBox").innerHTML = `<em>Link expired.</em>`;
-        }, 2 * 60 * 1000); // 2 minutes
-      };
-      reader.readAsArrayBuffer(uploadedFile);
+      
+      const uploadButton = document.getElementById('uploadButton');
+      const statusBar = document.getElementById('statusBar');
+      const statusProgress = document.getElementById('statusProgress');
+      
+      // Disable button during upload
+      uploadButton.disabled = true;
+      uploadButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+      
+      // Show progress bar
+      statusBar.style.display = 'block';
+      
+      // Simulate upload progress
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.random() * 10;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          
+          // Process file after upload completes
+          setTimeout(() => processFile(), 300);
+        }
+        statusProgress.style.width = `${progress}%`;
+      }, 200);
+    }
+    
+    function processFile() {
+      // Reset button
+      const uploadButton = document.getElementById('uploadButton');
+      uploadButton.disabled = false;
+      uploadButton.innerHTML = '<i class="fas fa-shield-alt"></i> Generate Secure Link';
+      
+      // Hide progress bar
+      document.getElementById('statusBar').style.display = 'none';
+      
+      // Generate a unique ID for the file (simulating server-side processing)
+      const fileId = 'blk_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now().toString(36);
+      
+      // Create a shareable link
+      const downloadLink = `https://blockshare.com/download/${fileId}`;
+      
+      // Display the link
+      const linkBox = document.getElementById('secureLinkBox');
+      document.getElementById('linkDisplay').textContent = downloadLink;
+      document.getElementById('downloadLink').href = downloadLink;
+      linkBox.style.display = 'block';
+      
+      // Set expiration timer (2 minutes)
+      let timeLeft = 120; // seconds
+      document.getElementById('countdown').textContent = '2:00';
+      
+      // Start countdown
+      if (countdownInterval) clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0) {
+          clearInterval(countdownInterval);
+          document.getElementById('secureLinkBox').innerHTML = `
+            <h3><i class="fas fa-exclamation-triangle"></i> Link Expired</h3>
+            <p>This download link has expired for security reasons.</p>
+            <small>Please generate a new link if you need to share this file again.</small>
+          `;
+        } else {
+          const minutes = Math.floor(timeLeft / 60);
+          const seconds = timeLeft % 60;
+          document.getElementById('countdown').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+      }, 1000);
+      
+      // Scroll to link box
+      linkBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   </script>
 </body>
